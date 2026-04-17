@@ -10,8 +10,7 @@ Predicting CDK2 inhibitor potency from molecular structure using machine learnin
 
 
 
-!\[SAR Summary](./figures/sar\_summary.png)
-
+![SAR Summary](https://raw.githubusercontent.com/sandvikerik-spec/cdk2-qsar/main/figures/sar_summary.png)
 
 
 XGBoost model trained on 2,001 CDK2 inhibitors across 857 unique Murcko scaffolds.  
@@ -78,15 +77,14 @@ Scaffold-based train/test split (80/20) using Murcko scaffolds — entire scaffo
 
 
 
-!\[Predicted vs Actual](./figures/predicted\_vs\_actual.png)
-
+![Predicted vs Actual](https://raw.githubusercontent.com/sandvikerik-spec/cdk2-qsar/main/figures/predicted_vs_actual.png)
 
 
 \## SAR Findings
 
 
 
-!\[SHAP Summary](./figures/shap\_summary.png)
+![SHAP Summary](https://raw.githubusercontent.com/sandvikerik-spec/cdk2-qsar/main/figures/shap_summary.png)
 
 
 
@@ -114,7 +112,7 @@ Top features by mean absolute SHAP value:
 
 
 
-!\[Sulfonamide Activity](./figures/bit350\_sulfonamide\_activity.png)
+![Sulfonamide Activity](https://raw.githubusercontent.com/sandvikerik-spec/cdk2-qsar/main/figures/bit350_sulfonamide_activity.png)
 
 
 
@@ -126,8 +124,7 @@ Compounds containing sulfonamide substructures (n=411) show mean pIC50 of 7.24 v
 
 
 
-!\[SAR Summary](./figures/sar\_summary.png)
-
+![SAR Summary](https://raw.githubusercontent.com/sandvikerik-spec/cdk2-qsar/main/figures/sar_summary.png)
 
 
 | Group | n | Mean pIC50 |
