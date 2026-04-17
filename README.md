@@ -1,0 +1,184 @@
+\# CDK2 QSAR Model
+
+
+
+Predicting CDK2 inhibitor potency from molecular structure using machine learning on ChEMBL bioactivity data.
+
+
+
+\## Key Result
+
+
+
+!\[SAR Summary](figures/sar\_summary.png)
+
+
+
+XGBoost model trained on 2,001 CDK2 inhibitors across 857 unique Murcko scaffolds.  
+
+Scaffold-split test set: \*\*R²=0.39, RMSE=0.96 pIC50 units\*\*.
+
+
+
+\*\*Key SAR Finding:\*\* SHAP analysis identified an aniline NH (hinge-binding donor to Leu83) as the near-universal CDK2 pharmacophore (present in \~93% of active compounds), with sulfonamide-containing compounds showing \*\*6.8x higher median potency\*\* than non-sulfonamide compounds.
+
+
+
+\## Approach
+
+
+
+\### Data
+
+\- Source: ChEMBL CHEMBL301 (Cyclin-dependent kinase 2, single protein)
+
+\- Filters: biochemical IC50 only, standard relation "=", nM units
+
+\- Final dataset: 2,001 compounds, pIC50 range 3.46–9.52, 857 unique Murcko scaffolds
+
+
+
+\### Featurization
+
+\- 1024-bit ECFP4 Morgan fingerprints (radius=2)
+
+\- 10 RDKit physicochemical descriptors (MolWt, LogP, TPSA, HBD, HBA, RotBonds, Rings, ArRings, FSP3, Heteroatoms)
+
+\- Total: 1,034 features per compound
+
+
+
+\### Split Strategy
+
+Scaffold-based train/test split (80/20) using Murcko scaffolds — entire scaffold families assigned to either train or test, never split across both. This tests generalization to genuinely new chemotypes rather than close analogs of training compounds.
+
+
+
+\### Models
+
+\- Random Forest (n=200 trees)
+
+\- XGBoost (n=300 trees, lr=0.05)
+
+\- SHAP TreeExplainer for interpretability
+
+
+
+\## Results
+
+
+
+| Model | R² | RMSE (pIC50) |
+
+|-------|----|--------------|
+
+| Random Forest | 0.362 | 0.980 |
+
+| XGBoost | 0.389 | 0.959 |
+
+
+
+!\[Predicted vs Actual](figures/predicted\_vs\_actual.png)
+
+
+
+\## SAR Findings
+
+
+
+!\[SHAP Summary](figures/shap\_summary.png)
+
+
+
+Top features by mean absolute SHAP value:
+
+
+
+| Feature | Type | Chemical meaning |
+
+|---------|------|-----------------|
+
+| MolWt | PhysChem | Size required to fill ATP pocket |
+
+| TPSA | PhysChem | Polar surface for hinge/DFG H-bonds |
+
+| bit\_128 | ECFP4 | Aniline NH — universal hinge binder (Leu83) |
+
+| bit\_350 | ECFP4 | Sulfonamide NH — secondary H-bond donor |
+
+| bit\_319 | ECFP4 | Sulfonamide on specific ring system |
+
+
+
+\### Sulfonamide potency advantage
+
+
+
+!\[Sulfonamide Activity](figures/bit350\_sulfonamide\_activity.png)
+
+
+
+Compounds containing sulfonamide substructures (n=411) show mean pIC50 of 7.24 vs 6.41 for non-sulfonamide compounds — a \*\*6.8x improvement in IC50\*\*.
+
+
+
+\### Pharmacophoric stratification
+
+
+
+!\[SAR Summary](figures/sar\_summary.png)
+
+
+
+| Group | n | Mean pIC50 |
+
+|-------|---|-----------|
+
+| Aniline + Sulfonamide | \~200 | \~7.5 |
+
+| Aniline only | \~1,200 | \~6.8 |
+
+| Neither | \~376 | \~6.0 |
+
+
+
+\## Why R²=0.39 is the honest result
+
+
+
+Random train/test splits on this dataset yield R²\~0.70 by leaking structural information — close analogs of test compounds appear in training. The scaffold split is the realistic drug discovery test: can the model generalize to new chemotypes? Published QSAR benchmarks on ChEMBL kinase datasets with scaffold splits typically report R²=0.35–0.55. This model is within that range and its predictions are useful for compound triage and rank-ordering, not precise potency prediction.
+
+
+
+\## Requirements
+
+
+
+```bash
+
+pip install -r requirements.txt
+
+```
+
+
+
+\## Usage
+
+
+
+```bash
+
+jupyter notebook notebook/cdk2\_qsar\_model.ipynb
+
+```
+
+
+
+\## Author
+
+
+
+Erik Sandvik — Senior Scientist, Drug Discovery  
+
+Built as part of a computational drug discovery portfolio demonstrating integration of cheminformatics, ML, and HTS domain expertise.
+
