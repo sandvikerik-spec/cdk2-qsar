@@ -10,7 +10,7 @@ Predicting CDK2 inhibitor potency from molecular structure using machine learnin
 
 
 
-!\[SAR Summary](figures/sar\_summary.png)
+!\[SAR Summary](./figures/sar\_summary.png)
 
 
 
@@ -78,7 +78,7 @@ Scaffold-based train/test split (80/20) using Murcko scaffolds — entire scaffo
 
 
 
-!\[Predicted vs Actual](figures/predicted\_vs\_actual.png)
+!\[Predicted vs Actual](./figures/predicted\_vs\_actual.png)
 
 
 
@@ -86,7 +86,7 @@ Scaffold-based train/test split (80/20) using Murcko scaffolds — entire scaffo
 
 
 
-!\[SHAP Summary](figures/shap\_summary.png)
+!\[SHAP Summary](./figures/shap\_summary.png)
 
 
 
@@ -114,7 +114,7 @@ Top features by mean absolute SHAP value:
 
 
 
-!\[Sulfonamide Activity](figures/bit350\_sulfonamide\_activity.png)
+!\[Sulfonamide Activity](./figures/bit350\_sulfonamide\_activity.png)
 
 
 
@@ -126,7 +126,7 @@ Compounds containing sulfonamide substructures (n=411) show mean pIC50 of 7.24 v
 
 
 
-!\[SAR Summary](figures/sar\_summary.png)
+!\[SAR Summary](./figures/sar\_summary.png)
 
 
 
