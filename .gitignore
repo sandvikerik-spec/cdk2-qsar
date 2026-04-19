@@ -1,0 +1,17 @@
+# Data files
+data/*.csv
+
+# Model weights
+models/*.pt
+models/*.pth
+models/training_history.csv
+
+# Helper scripts
+write_*.py
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
