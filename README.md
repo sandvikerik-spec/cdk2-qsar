@@ -186,4 +186,72 @@ jupyter notebook notebook/cdk2\_qsar\_model.ipynb
 Erik Sandvik — Senior Scientist, Drug Discovery  
 
 Built as part of a computational drug discovery portfolio demonstrating integration of cheminformatics, ML, and HTS domain expertise.
+---
 
+## Part 2: Graph Neural Network Extension
+
+Building on the fingerprint-based model, a graph neural network (AttentiveFP) was implemented to test whether learning directly from molecular graphs improves predictive performance.
+
+### Motivation
+
+ECFP4 fingerprints encode molecular structure as fixed-length bit vectors — information is compressed and some structural context is lost. Graph neural networks operate directly on the molecular graph (atoms as nodes, bonds as edges), learning representations end-to-end from the data. In principle this should capture richer structural information.
+
+### Architecture — AttentiveFP
+
+AttentiveFP uses an attention mechanism to weight neighbor contributions during message passing, allowing the model to focus on the most relevant parts of the molecular graph for each prediction.
+
+**Atom features (150 dimensions):**
+- One-hot encoded: atomic number, degree, hybridization, formal charge, hydrogen count
+- Continuous: Gasteiger partial charge, normalized atomic mass
+- Binary: aromaticity, ring membership
+
+**Bond features (8 dimensions):**
+- One-hot encoded: bond type (single/double/triple/aromatic)
+- Binary: conjugation, ring membership, stereo
+
+**Model:** 1,199,201 parameters | 3 message passing layers | 200 hidden channels
+
+### Results
+
+![Model Comparison](https://raw.githubusercontent.com/sandvikerik-spec/cdk2-qsar/main/figures/model_comparison.png)
+
+| Model | R² | RMSE (pIC50) | Pearson r |
+|-------|----|--------------|-----------|
+| XGBoost (fingerprints) | 0.389 | 0.959 | 0.647 |
+| AttentiveFP GNN | 0.327 | 1.007 | 0.594 |
+| Ensemble (75% XGB + 25% GNN) | 0.413 | 0.940 | 0.657 |
+
+### Key Finding — XGBoost Outperforms GNN at This Dataset Size
+
+The GNN underperformed the fingerprint-based model despite its greater theoretical expressiveness. The optimal ensemble weight (75% XGBoost) confirms XGBoost dominates at this scale.
+
+This is consistent with published benchmarks: GNN advantage over fingerprint models typically emerges above ~5,000 training compounds. At n=1,600 (scaffold split), the GNN has insufficient data to learn generalizable graph representations for novel chemotypes.
+
+The ensemble (Pearson r=0.657) outperforms both individual models, confirming the two approaches capture partially complementary structural information despite XGBoost's dominance.
+
+### Practical Implication
+
+For CDK2 with this dataset size, the recommended deployment is:
+- **Primary model:** XGBoost (fingerprints) — better performance, faster inference, interpretable via SHAP
+- **Ensemble:** XGBoost
+
+### Project Structure
+
+src/
+├── data.py       — ChEMBL fetch, caching, scaffold split
+├── features.py   — SMILES → PyG graph with atom/bond features
+├── model.py      — AttentiveFP GNN architecture
+└── train.py      — training loop, early stopping, evaluation
+scripts/
+├── train_gnn.py  — GNN training entry point
+└── ensemble.py   — model comparison and ensemble
+
+### Running the GNN Pipeline
+
+```bash
+# Train GNN
+python -m scripts.train_gnn
+
+# Compare models and build ensemble
+python -m scripts.ensemble
+```
